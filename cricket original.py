@@ -40,8 +40,11 @@ class CricketGame:
     def check_winner(self):
         for player in self.players:
             if all(self.marks[player][number] == 3 for number in self.marks[player]):
-                other_player = [p for p in self.players if p != player][0]
-                if self.scores[player] > self.scores[other_player]:
+                if all(
+                    self.scores[player] > self.scores[other]
+                    for other in self.players
+                    if other != player
+                ):
                     return player
         return None
 
@@ -80,8 +83,6 @@ def main():
         for player in players:
             marks = game.display_marks(player)
             print(f"{player:<10} {game.scores[player]:<5} {marks[20]:<3} {marks[19]:<3} {marks[18]:<3} {marks[17]:<3} {marks[16]:<3} {marks[15]:<3} {marks['bull']:<8}")
-            # Maarten is een Homo
-            # Bram ook
         winner = game.check_winner()
         if winner:
             print(f"\n {winner} wint!")
