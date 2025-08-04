@@ -83,8 +83,6 @@ def main():
         for player in players:
             marks = game.display_marks(player)
             print(f"{player:<10} {game.scores[player]:<5} {marks[20]:<3} {marks[19]:<3} {marks[18]:<3} {marks[17]:<3} {marks[16]:<3} {marks[15]:<3} {marks['bull']:<8}")
-            # Maarten is een Homo
-            # Bram ook
         winner = game.check_winner()
         if winner:
             print(f"\n {winner} wint!")
