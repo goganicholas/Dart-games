@@ -54,14 +54,14 @@ class CricketGUI:
     def __init__(self, root):
         self.root = root
         self.root.title("Cricket Darts")
-        self.root.geometry("300x500")
-        self.root.configure(bg="#222")
+        self.root.geometry("400x500")
+        self.root.configure(bg="#013220")
         self.setup_start_screen()
 
     def setup_start_screen(self):
-        self.start_frame = tk.Frame(self.root, bg="#222")
+        self.start_frame = tk.Frame(self.root, bg="#013220")
         self.start_frame.pack(padx=10, pady=10, fill="both", expand=True)
-        tk.Label(self.start_frame, text="Player names (comma separated):", fg="white", bg="#222").pack(pady=(100,5))
+        tk.Label(self.start_frame, text="Player names (comma separated):", fg="white", bg="#013220").pack(pady=(100,5))
         self.names_entry = tk.Entry(self.start_frame, justify="center")
         self.names_entry.pack()
         tk.Button(self.start_frame, text="Start Game", command=self.start_game).pack(pady=20)
@@ -78,33 +78,43 @@ class CricketGUI:
         self.setup_game_screen()
 
     def setup_game_screen(self):
-        self.game_frame = tk.Frame(self.root, bg="#222")
+        self.game_frame = tk.Frame(self.root, bg="#013220")
         self.game_frame.pack(fill="both", expand=True)
 
-        control_frame = tk.Frame(self.game_frame, bg="#222")
+        control_frame = tk.Frame(self.game_frame, bg="#013220")
         control_frame.pack(pady=10)
 
-        tk.Label(control_frame, text="Player", fg="white", bg="#222").pack(side="left")
+        tk.Label(control_frame, text="Player", fg="white", bg="#013220").pack(side="left")
         self.current_player_var = tk.StringVar(value=self.players[0])
-        tk.OptionMenu(control_frame, self.current_player_var, *self.players).pack(side="left", padx=5)
+        player_menu = tk.OptionMenu(control_frame, self.current_player_var, *self.players)
+        player_menu.config(bg="#013220", fg="white", highlightthickness=0)
+        player_menu['menu'].config(bg="#013220", fg="white")
+        player_menu.pack(side="left", padx=5)
 
-        tk.Label(control_frame, text="Multiplier", fg="white", bg="#222").pack(side="left", padx=(10,0))
+        tk.Label(control_frame, text="Multiplier", fg="white", bg="#013220").pack(side="left", padx=(10,0))
         self.mult_var = tk.IntVar(value=1)
         for val in [1,2,3]:
             tk.Radiobutton(control_frame, text=str(val), variable=self.mult_var, value=val,
-                           bg="#222", fg="white", selectcolor="#444").pack(side="left")
+                           bg="#013220", fg="white", selectcolor="#02511f").pack(side="left")
 
-        numbers_frame = tk.Frame(self.game_frame, bg="#222")
-        numbers_frame.pack(pady=10, fill="y", expand=True)
+        numbers_frame = tk.Frame(self.game_frame, bg="#013220")
+        numbers_frame.pack(side="left", padx=10, pady=10)
 
         for number in [20,19,18,17,16,15,'BULL']:
             btn = tk.Button(numbers_frame, text=str(number).upper(), font=("Helvetica", 18),
-                             width=10, height=1,
+                             width=10, height=1, bg="#013220", fg="white",
+                             activebackground="#02511f",
                              command=lambda n=number: self.record_throw(n))
             btn.pack(pady=5, fill="x")
 
-        self.score_text = tk.Text(self.game_frame, width=28, height=10, state="disabled", bg="#111", fg="white")
-        self.score_text.pack(side="bottom", fill="x", padx=10, pady=10)
+        score_frame = tk.Frame(self.game_frame, bg="#013220")
+        score_frame.pack(side="left", padx=10, pady=10)
+        self.score_labels = {}
+        for player in self.players:
+            lbl = tk.Label(score_frame, text=f"{player}: 0", font=("Helvetica", 18),
+                            fg="white", bg="#013220")
+            lbl.pack(pady=5, anchor="w")
+            self.score_labels[player] = lbl
 
         self.update_scores()
 
@@ -122,15 +132,8 @@ class CricketGUI:
         self.update_scores()
 
     def update_scores(self):
-        self.score_text.configure(state="normal")
-        self.score_text.delete("1.0", tk.END)
-        header = f"{'Speler':<10} {'Score':<5} {'20':<3} {'19':<3} {'18':<3} {'17':<3} {'16':<3} {'15':<3} {'Bull':<3}\n"
-        self.score_text.insert(tk.END, header)
         for player in self.players:
-            marks = self.game.display_marks(player)
-            line = f"{player:<10} {self.game.scores[player]:<5} {marks[20]:<3} {marks[19]:<3} {marks[18]:<3} {marks[17]:<3} {marks[16]:<3} {marks[15]:<3} {marks['bull']:<3}\n"
-            self.score_text.insert(tk.END, line)
-        self.score_text.configure(state="disabled")
+            self.score_labels[player].configure(text=f"{player}: {self.game.scores[player]}")
 
 
 def main():
