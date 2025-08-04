@@ -54,7 +54,7 @@ class CricketGUI:
     def __init__(self, root):
         self.root = root
         self.root.title("Cricket Darts")
-        self.root.geometry("400x500")
+        self.root.geometry("500x500")
         self.root.configure(bg="#013220")
         self.setup_start_screen()
 
@@ -110,11 +110,33 @@ class CricketGUI:
         score_frame = tk.Frame(self.game_frame, bg="#013220")
         score_frame.pack(side="left", padx=10, pady=10)
         self.score_labels = {}
+        self.mark_labels = {}
         for player in self.players:
-            lbl = tk.Label(score_frame, text=f"{player}: 0", font=("Helvetica", 18),
-                            fg="white", bg="#013220")
-            lbl.pack(pady=5, anchor="w")
-            self.score_labels[player] = lbl
+            player_col = tk.Frame(score_frame, bg="#013220")
+            player_col.pack(side="left", padx=10)
+
+            tk.Label(player_col, text=player, font=("Helvetica", 18, "bold"),
+                     fg="white", bg="#013220").pack()
+
+            info_frame = tk.Frame(player_col, bg="#013220")
+            info_frame.pack()
+
+            score_lbl = tk.Label(info_frame, text="0", font=("Helvetica", 18),
+                                 fg="white", bg="#013220")
+            score_lbl.pack(side="left", padx=(0,10))
+
+            marks_frame = tk.Frame(info_frame, bg="#013220")
+            marks_frame.pack(side="left")
+
+            marks_lbls = {}
+            for num in [20,19,18,17,16,15,'bull']:
+                lbl = tk.Label(marks_frame, text="", font=("Helvetica", 18),
+                               fg="white", bg="#013220")
+                lbl.pack()
+                marks_lbls[num] = lbl
+
+            self.score_labels[player] = score_lbl
+            self.mark_labels[player] = marks_lbls
 
         self.update_scores()
 
@@ -133,7 +155,10 @@ class CricketGUI:
 
     def update_scores(self):
         for player in self.players:
-            self.score_labels[player].configure(text=f"{player}: {self.game.scores[player]}")
+            self.score_labels[player].configure(text=str(self.game.scores[player]))
+            marks = self.game.display_marks(player)
+            for num, symbol in marks.items():
+                self.mark_labels[player][num].configure(text=symbol)
 
 
 def main():
