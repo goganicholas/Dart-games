@@ -45,8 +45,11 @@ class CricketGame:
     def check_winner(self):
         for player in self.players:
             if all(self.marks[player][number] == 3 for number in self.marks[player]):
-                other_player = [p for p in self.players if p != player][0]
-                if self.scores[player] > self.scores[other_player]:
+                if all(
+                    self.scores[player] > self.scores[other]
+                    for other in self.players
+                    if other != player
+                ):
                     return player
         return None
 
